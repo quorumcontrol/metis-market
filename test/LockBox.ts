@@ -1,8 +1,8 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { constants } from "ethers";
+import { constants, BigNumber } from "ethers";
 import { ethers } from "hardhat";
-import { LockBox, TestNFT } from "../typechain";
+import { LockBox, LockBox__factory, TestNFT } from "../typechain";
 
 describe("LockBox", function () {
   let lockBox:LockBox
@@ -14,8 +14,12 @@ describe("LockBox", function () {
     const signers = await ethers.getSigners()
     alice = signers[0]
 
+    const TestMessagePasserFactory = await ethers.getContractFactory("TestMessagePasser")
+    const testMessagePasser = await TestMessagePasserFactory.deploy()
+    await testMessagePasser.deployed()
+
     const LockBoxFactory = await ethers.getContractFactory("LockBox");
-    lockBox = await LockBoxFactory.deploy(constants.AddressZero, constants.AddressZero)
+    lockBox = await LockBoxFactory.deploy(testMessagePasser.address, constants.AddressZero)
     await lockBox.deployed()
 
     const NFTFactory = await ethers.getContractFactory("TestNFT");
@@ -24,6 +28,9 @@ describe("LockBox", function () {
   })
 
   it("can receive an NFT", async function () {
-    await testNFT.mint(alice.address)
+    const tx = await testNFT.mint(alice.address)
+    const receipt = await tx.wait()
+    const tokenId:BigNumber = testNFT.interface.parseLog(receipt.logs[0]).args.tokenId
+    await expect(testNFT["safeTransferFrom(address,address,uint256)"](alice.address, lockBox.address, tokenId)).to.not.be.reverted
   });
 });
