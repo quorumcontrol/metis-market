@@ -36,9 +36,9 @@ contract L2KeyHandler is IL2KeyHandler, ERC721  {
         address tokenContract,
         uint256 tokenId,
         address owner
-    ) public {
+    ) override public {
 
-      // todo: asser that the message came from the LockBox
+      // todo: assert that the message came from the LockBox
        _tokenIds.increment();
 
       uint256 newItemId = _tokenIds.current();
