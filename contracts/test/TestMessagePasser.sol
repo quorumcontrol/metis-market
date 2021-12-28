@@ -6,22 +6,31 @@ import "../interfaces/IOVMMessagePasser.sol";
 
 contract TestMessagePasser is IOVMMessagePasser {
 
-    address public messageSender;
+    address public lastMessageSender;
+    address public lastTarget;
+    bytes public lastCallData;
     
 
     function setMessageSender(address sender) public {
-      messageSender = sender;
+      lastMessageSender = sender;
     }
 
     function sendMessage(
         address _target,
-        bytes memory,
+        bytes memory callData,
         uint32
     ) override public {
-      console.log(_target);
+      lastTarget = _target;
+      lastCallData = callData;
+      lastMessageSender = msg.sender;
     }
 
     function xDomainMessageSender() override public view returns (address) {
-      return messageSender;
+      return lastMessageSender;
+    }
+
+    function executeTestSend() public {
+      (bool worked,) = lastTarget.call(lastCallData);
+      require(worked, "call to target failed");
     }
 }

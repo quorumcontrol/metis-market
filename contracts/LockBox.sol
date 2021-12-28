@@ -8,8 +8,9 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./interfaces/IOVMMessagePasser.sol";
 
 contract LockBox is IERC721Receiver {
+    error Unauthorized();
 
-    uint32 constant private GAS_LIMIT = 10000000;
+    uint32 constant private GAS_LIMIT = 1000000;
     
     IOVMMessagePasser private messagePasser;
     address private l2KeyHandler;
@@ -20,6 +21,15 @@ contract LockBox is IERC721Receiver {
     ) {
         messagePasser = IOVMMessagePasser(_messagePasserAddress);
         l2KeyHandler = _l2KeyHandlerAddress;
+    }
+
+    function release(address tokenAddress, uint256 tokenId, address to) public {
+        if (msg.sender != address(messagePasser) || messagePasser.xDomainMessageSender() != l2KeyHandler) {
+            revert Unauthorized();
+        }
+        // console.log("releasing to", to, tokenAddress);
+        // console.log("releasing token id: ", tokenId);
+        IERC721(tokenAddress).safeTransferFrom(address(this), to, tokenId);
     }
 
     // TODO: support sending to a different address using the data argument
