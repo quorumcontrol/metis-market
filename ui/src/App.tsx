@@ -5,13 +5,14 @@ import {
 import { Routes, Route } from "react-router-dom";
 import theme from './utils/theme'
 import MainLayout from "./layouts/MainLayout"
+import BridgePage from "./pages/BridgePage";
 
 
 export const App = () => (
   <ChakraProvider theme={theme}>
     <Routes>
       <Route>
-        <Route path="/" element={<MainLayout><p>hi</p></MainLayout>} />
+        <Route path="/" element={<MainLayout><BridgePage /></MainLayout>} />
       </Route>
     </Routes>
     {/* <Box textAlign="center" fontSize="xl">
