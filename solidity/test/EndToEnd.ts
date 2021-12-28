@@ -4,7 +4,7 @@ import { constants, BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { L2KeyHandler, LockBox, LockBox__factory, TestMessagePasser, TestNFT } from "../typechain";
 
-describe("LockBox", function () {
+describe("End2End", function () {
   let testNFT:TestNFT
   let testMessagePasser:TestMessagePasser
   let l2KeyHandler:L2KeyHandler
@@ -54,13 +54,12 @@ describe("LockBox", function () {
     expect(metadata.tokenId).to.equal(tokenId)
   })
 
-  it.only('releases a l1 token on burn from l2', async () => {
+  it('releases a l1 token on burn from l2', async () => {
     await expect(testNFT["safeTransferFrom(address,address,uint256)"](alice.address, lockBox.address, tokenId)).to.not.be.reverted
     await expect(testMessagePasser.executeTestSend()).to.not.be.reverted
     const l2TokenId = await l2KeyHandler.tokenOfOwnerByIndex(alice.address, 0)
     await l2KeyHandler.burn(l2TokenId)
     await expect(testMessagePasser.executeTestSend()).to.not.be.reverted // send the message from the burn
-    console.log("token id: ", tokenId.toString())
     expect(await testNFT.ownerOf(tokenId)).to.equal(alice.address)
   })
 });
