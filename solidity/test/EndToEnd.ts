@@ -1,8 +1,8 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { constants, BigNumber } from "ethers";
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
-import { L2KeyHandler, LockBox, LockBox__factory, TestMessagePasser, TestNFT } from "../typechain";
+import { L2KeyHandler, LockBox, TestMessagePasser, TestNFT } from "../typechain";
 
 describe("End2End", function () {
   let testNFT:TestNFT

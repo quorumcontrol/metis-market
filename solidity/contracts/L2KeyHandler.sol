@@ -21,7 +21,7 @@ contract L2KeyHandler is IL2KeyHandler, ERC721Enumerable, ERC721Burnable {
     Counters.Counter private _tokenIds;
 
     IOVMMessagePasser private messagePasser;
-    address private lockBox;
+    address public lockBox;
 
     struct LockedL1Token {
       address tokenContract;
