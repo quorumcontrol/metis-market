@@ -1,7 +1,6 @@
 import { Box, HStack, VStack } from '@chakra-ui/react'
-import React, { useMemo } from 'react'
+import React from 'react'
 import { EXPECTED_MAINNET_CHAIN_ID } from '../chain/Chain'
-import useChain from '../hooks/useChain'
 import useIsNetwork from '../hooks/useIsNetwork'
 import ConnectPage from '../pages/ConnectPage'
 

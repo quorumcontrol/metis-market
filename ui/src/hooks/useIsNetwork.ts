@@ -6,7 +6,7 @@ const useIsNetwork = (chainId:number) => {
 
   return useMemo(() => {
     return network?.chainId === chainId
-  }, [network])
+  }, [network, chainId])
 }
 
 export default useIsNetwork

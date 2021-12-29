@@ -6,8 +6,15 @@ type Web3ModalProvider = any
 
 export const CONNECTION_CHANGE = 'conected'
 
-export const EXPECTED_MAINNET_CHAIN_ID = 4 // rinkeby
-export const EXPECTED_METIS_CHAIN_ID = 588 // stardust
+export let EXPECTED_MAINNET_CHAIN_ID = 4 // rinkeby
+export let EXPECTED_METIS_CHAIN_ID = 588 // stardust
+
+if (process.env.REACT_APP_LOCAL_TEST) {
+  console.log("Using local-only setup")
+  EXPECTED_MAINNET_CHAIN_ID = 31337 // rinkeby
+  EXPECTED_METIS_CHAIN_ID = 31337 // stardust
+}
+
 
 const providerOptions = {
   /* See Provider Options Section */
