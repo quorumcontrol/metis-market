@@ -1,1 +1,1 @@
-import './nft'
+import './localutils'

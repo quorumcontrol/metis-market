@@ -9,6 +9,7 @@ interface ChainState {
   signer?: Signer
   provider?: providers.Provider
   network?: providers.Network
+  contracts?: Chain['contracts']
 }
 
 const useChain = () => {
@@ -16,7 +17,8 @@ const useChain = () => {
     chain,
     signer: chain.signer,
     provider: chain.provider,
-    network: chain.network
+    network: chain.network,
+    contracts: chain.contracts,
   })
 
   useEffect(() => {
@@ -25,7 +27,8 @@ const useChain = () => {
         chain,
         signer: chain.signer,
         provider: chain.provider,
-        network: chain.network
+        network: chain.network,
+        contracts: chain.contracts
       })
     }
     chain.on(CONNECTION_CHANGE, handleConnectionChange)
