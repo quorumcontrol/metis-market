@@ -16,11 +16,13 @@ const web3Modal = new Web3Modal({
 class Chain extends EventEmitter {
   signer?:Signer
   provider?:providers.Web3Provider
+  network?: providers.Network
 
   async connect() {
     const web3Provider = await web3Modal.connect();
     this.provider = new providers.Web3Provider(web3Provider)
     this.signer = this.provider.getSigner()
+    this.network = await this.provider.getNetwork()
     this.emit('connected')
   }
 
