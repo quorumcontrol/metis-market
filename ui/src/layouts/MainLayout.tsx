@@ -1,14 +1,12 @@
 import { Box, HStack, VStack } from '@chakra-ui/react'
 import React, { useMemo } from 'react'
+import { EXPECTED_MAINNET_CHAIN_ID } from '../chain/Chain'
 import useChain from '../hooks/useChain'
+import useIsNetwork from '../hooks/useIsNetwork'
 import ConnectPage from '../pages/ConnectPage'
 
 const MainLayout:React.FC = ({ children }) => {
-  const { network } = useChain()
-
-  const isMainnet = useMemo(() => {
-    return network?.chainId === 1
-  }, [network])
+  const isRinkeby = useIsNetwork(EXPECTED_MAINNET_CHAIN_ID)
 
   return (
     <Box fontSize="xl">
@@ -19,7 +17,7 @@ const MainLayout:React.FC = ({ children }) => {
       </nav>
       <VStack p="2">
         <Box>
-          {isMainnet ? children : <ConnectPage />}
+          {isRinkeby ? children : <ConnectPage />}
         </Box>
       </VStack>
     </Box>

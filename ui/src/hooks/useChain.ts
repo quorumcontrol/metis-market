@@ -1,6 +1,6 @@
 import { providers, Signer } from "ethers"
 import { useEffect, useState } from "react"
-import Chain from "../chain/Chain"
+import Chain, { CONNECTION_CHANGE } from "../chain/Chain"
 
 const chain = new Chain()
 
@@ -20,14 +20,18 @@ const useChain = () => {
   })
 
   useEffect(() => {
-    chain.on('connected', () => {
+    const handleConnectionChange = () => {
       setChainState({
         chain,
         signer: chain.signer,
         provider: chain.provider,
         network: chain.network
       })
-    })
+    }
+    chain.on(CONNECTION_CHANGE, handleConnectionChange)
+    return () => {
+      chain.off(CONNECTION_CHANGE, handleConnectionChange)
+    }
   })
 
   return chainState
