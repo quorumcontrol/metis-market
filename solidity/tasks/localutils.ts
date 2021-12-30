@@ -5,9 +5,10 @@ import { BigNumber, utils } from 'ethers'
 
 task('mint-nft', 'local only task to provide a minted nft')
   .addParam('to', 'the address where to mint')
-  .setAction(async ({ to }, env) => {
+  .addParam('tokenUri', 'the token URI')
+  .setAction(async ({ to, tokenUri }, env) => {
     const testNFT = await fetchContract<TestNFT>('TestNFT', env)
-    const tx = await testNFT.mint(to)
+    const tx = await testNFT.mint(to, tokenUri)
     const receipt = await tx.wait()
     const tokenId = testNFT.interface.parseLog(receipt.logs[0]).args.tokenId
 
@@ -18,7 +19,7 @@ task('mint-nft', 'local only task to provide a minted nft')
   })
 
 task('pass-message', 'local only tell the test message passer to send the message')
-  .setAction(async ({ to }, env) => {
+  .setAction(async (_, env) => {
     const messagePasser = await fetchContract<TestMessagePasser>('TestMessagePasser', env)
     const tx = await messagePasser.executeTestSend()
     await tx.wait()

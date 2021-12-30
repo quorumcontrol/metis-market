@@ -9,6 +9,10 @@ describe("TestNFT", function () {
     const nft = await TestNFT.deploy();
     await nft.deployed();
 
-    await expect(nft.mint(signers[0].address)).to.not.be.reverted
+    const tx = await nft.mint(signers[0].address, "http://test.test")
+    const receipt = await tx.wait()
+    const tokenId = nft.interface.parseLog(receipt.logs[0]).args.tokenId
+
+    expect(await nft.tokenURI(tokenId)).to.equal('http://test.test')
   });
 });

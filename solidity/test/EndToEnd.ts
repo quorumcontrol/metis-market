@@ -35,7 +35,7 @@ describe("End2End", function () {
     testNFT = await NFTFactory.deploy()
     await testNFT.deployed()
 
-    const tx = await testNFT.mint(alice.address)
+    const tx = await testNFT.mint(alice.address, "http://test.test")
     const receipt = await tx.wait()
     tokenId = testNFT.interface.parseLog(receipt.logs[0]).args.tokenId
   })
