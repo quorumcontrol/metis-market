@@ -19,7 +19,7 @@ interface NFTBoxProps {
 
 const NFTBox:React.FC<NFTBoxProps> = ({ nft }) => {
   return (
-    <Box>
+    <Box border="1px" rounded="lg" p="4" maxW="lg">
       <p>{nft.tokenContract}</p>
       <p>{nft.tokenId.toString()}</p>
     </Box>
@@ -38,9 +38,8 @@ const NFTList:React.FC<NFTListProps> = ({ nfts }) => {
 }
 
 const ProfilePage:React.FC = () => {
-  const params = useParams()
-  console.log("params: ", params)
-  const { nfts, loading } = useL2NFTs(params.address)
+  const { address } = useParams()
+  const { nfts, loading } = useL2NFTs(address)
 
   if (loading) {
     return (
@@ -63,7 +62,7 @@ const ProfilePage:React.FC = () => {
   return (
     <VStack>
       <Box>
-        <Heading>address</Heading>
+        <Heading mb="10">{address}</Heading>
         <NFTList nfts={nfts} />
       </Box>
     </VStack>
