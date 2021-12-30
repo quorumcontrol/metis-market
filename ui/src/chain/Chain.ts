@@ -81,6 +81,7 @@ class Chain extends EventEmitter {
     if (!this.signer || !this.provider) {
       throw new Error('need to have a provider and signer')
     }
+    // TODO: deploy multicall to METIS and use multicall wrapper here
     return {
       lockBox: new LockBox__factory(this.signer).attach(addresses.LockBox),
       l2KeyHandler: new L2KeyHandler__factory(this.signer).attach(addresses.L2KeyHandler),
