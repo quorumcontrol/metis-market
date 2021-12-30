@@ -5,22 +5,22 @@ import useChain from '../hooks/useChain'
 import useIsNetwork from '../hooks/useIsNetwork'
 
 const ConnectPage:React.FC = () => {
-  const { chain, network } = useChain()
+  const { chain, network, desiredNetwork } = useChain()
 
   const onConnect = useCallback(() => {
     chain?.connect()
   }, [chain])
 
-  const isRinkeby = useIsNetwork(EXPECTED_MAINNET_CHAIN_ID)
+  const isDesired = useIsNetwork(desiredNetwork)
 
   const isConnected = useMemo(() => {
     return !!network
   }, [network])
 
-  if (isConnected && !isRinkeby) {
+  if (isConnected && !isDesired) {
     return (
       <Box>
-        <p>Please switch your wallet to point to Rinkeby network.</p>
+        <p>Please switch your wallet to point to {desiredNetwork} network. (TODO: make that number word)</p>
       </Box>
     )
   }

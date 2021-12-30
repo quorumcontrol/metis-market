@@ -41,7 +41,6 @@ const BridgePage: React.FC = () => {
     } finally {
       setLoading(false)
     }
-
   });
 
   if (loading) {

@@ -1,34 +1,46 @@
 import { providers, Signer } from "ethers"
 import { useEffect, useState } from "react"
-import Chain, { CONNECTION_CHANGE } from "../chain/Chain"
+import Chain, { CONNECTION_CHANGE, EXPECTED_MAINNET_CHAIN_ID, EXPECTED_METIS_CHAIN_ID } from "../chain/Chain"
 
 const chain = new Chain()
 
-interface ChainState {
+interface ChainStateExcludingDesired {
   chain: Chain
   signer?: Signer
   provider?: providers.Provider
   network?: providers.Network
   contracts?: Chain['contracts']
+  address?: string
 }
 
-const useChain = () => {
-  const [chainState, setChainState] = useState<ChainState>({
+interface ChainState extends ChainStateExcludingDesired {
+  desiredNetwork: number
+  setDesiredNetwork: React.Dispatch<React.SetStateAction<number>>
+}
+
+const useChain = ():ChainState => {
+  const [desiredNetwork, setDesiredNetwork] = useState(EXPECTED_METIS_CHAIN_ID)
+  const [chainState, setChainState] = useState<ChainStateExcludingDesired>({
     chain,
     signer: chain.signer,
     provider: chain.provider,
     network: chain.network,
     contracts: chain.contracts,
+    address: chain.address,
   })
 
   useEffect(() => {
     const handleConnectionChange = () => {
-      setChainState({
-        chain,
-        signer: chain.signer,
-        provider: chain.provider,
-        network: chain.network,
-        contracts: chain.contracts
+      setChainState((s) => {
+        return {
+          ...s,
+          chain,
+          address: chain.address,
+          signer: chain.signer,
+          provider: chain.provider,
+          network: chain.network,
+          contracts: chain.contracts,
+        }
       })
     }
     chain.on(CONNECTION_CHANGE, handleConnectionChange)
@@ -37,7 +49,11 @@ const useChain = () => {
     }
   })
 
-  return chainState
+  return {
+    ...chainState,
+    desiredNetwork,
+    setDesiredNetwork
+  }
 }
 
 export default useChain

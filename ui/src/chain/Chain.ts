@@ -18,10 +18,13 @@ export const CONNECTION_CHANGE = 'conected'
 export let EXPECTED_MAINNET_CHAIN_ID = 4 // rinkeby
 export let EXPECTED_METIS_CHAIN_ID = 588 // stardust
 
+export let MAINNET_PROVIDER_URL = 'https://eth-rinkeby.alchemyapi.io/v2/q07KTYxpTX8hq_TFTPIyOJM38jlWhRJF'
+
 if (isLocalHost()) {
   console.log("Using local-only setup")
   EXPECTED_MAINNET_CHAIN_ID = 31337 // rinkeby
   EXPECTED_METIS_CHAIN_ID = 31337 // stardust
+  MAINNET_PROVIDER_URL = 'http://localhost:8545'
 }
 
 const providerOptions = {
@@ -43,10 +46,18 @@ class Chain extends EventEmitter {
   signer?:Signer
   provider?:providers.Web3Provider
   network?: providers.Network
+  address?: string
+
+  mainnetProvider:providers.StaticJsonRpcProvider
 
   contracts?:Promise<Contracts>
 
   private web3ModalProvider?:Web3ModalProvider
+
+  constructor() {
+    super()
+    this.mainnetProvider = new providers.StaticJsonRpcProvider(MAINNET_PROVIDER_URL)
+  }
 
   async connect() {
     const provider = await web3Modal.connect();
@@ -71,6 +82,7 @@ class Chain extends EventEmitter {
       this.signer = undefined
       this.provider = undefined
       this.network = undefined
+      this.address = undefined
       this.emit(CONNECTION_CHANGE)
     });
 
@@ -93,6 +105,7 @@ class Chain extends EventEmitter {
     this.signer = this.provider.getSigner()
     this.network = await this.provider.getNetwork()
     this.contracts = this.setupContracts()
+    this.address = await this.signer.getAddress()
     this.emit(CONNECTION_CHANGE)
   }
 }
