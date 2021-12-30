@@ -1,6 +1,5 @@
 import { Box, Button } from '@chakra-ui/react'
 import React, { useCallback, useMemo } from 'react'
-import { EXPECTED_MAINNET_CHAIN_ID } from '../chain/Chain'
 import useChain from '../hooks/useChain'
 import useIsNetwork from '../hooks/useIsNetwork'
 
@@ -14,6 +13,7 @@ const ConnectPage:React.FC = () => {
   const isDesired = useIsNetwork(desiredNetwork)
 
   const isConnected = useMemo(() => {
+    console.log("is connected: ", !!network)
     return !!network
   }, [network])
 

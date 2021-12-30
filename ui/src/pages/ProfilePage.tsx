@@ -23,6 +23,7 @@ interface NFTBoxProps {
 }
 
 const NFTBox: React.FC<NFTBoxProps> = ({ nft }) => {
+  console.log('nft box: ', nft.tokenContract, nft.id)
   const { metadata, loading } = useMainnetNFTMetadata(
     nft.tokenContract,
     nft.id
@@ -69,8 +70,6 @@ const ProfilePage: React.FC = () => {
   const { nfts: l2Nfts, loading: l2Loading } = useL2NFTs(address);
   const { nfts: mainnetNfts, loading: mainnetLoading } =
     useMainnetNFTs(address);
-  // const mainnetNfts:NFTMetadata[] = []
-  // const mainnetLoading = false
 
   const nfts = useMemo(() => {
     if (!l2Nfts || !mainnetNfts) {

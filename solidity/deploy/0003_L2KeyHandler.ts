@@ -22,30 +22,34 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
     }
   }
 
-  const lockBoxAddress = async () => {
-    switch(network.name) {
-      case 'hardhat':
-        return (await get('LockBox')).address
-      case 'stardust':
-        return '0xB5642C348Ef444d801ED799fb9b122f980bf7178' // rinkeby deploy
-    }
-  }
-
   await deploy("L2KeyHandler", {
     log: true,
     from: deployer,
     args: [await messagePasserAddress()]
   })
-  
-  await execute(
-    "L2KeyHandler", 
-    {
-      log: true,
-      from: deployer,
-    },
-    "setupLockbox",
-    lockBoxAddress(),
-  )
+
+  if (network.live) {
+    const lockBoxAddress = async () => {
+      switch(network.name) {
+        case 'hardhat':
+          return (await get('LockBox')).address
+        case 'stardust':
+          return '0xB5642C348Ef444d801ED799fb9b122f980bf7178' // rinkeby deploy
+      }
+    }
+    
+    await execute(
+      "L2KeyHandler", 
+      {
+        log: true,
+        from: deployer,
+      },
+      "setupLockbox",
+      lockBoxAddress(),
+    )
+  }
+
+
 
 }
 export default func

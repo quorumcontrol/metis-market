@@ -8,7 +8,6 @@ import useChain from '../hooks/useChain'
 import useIsNetwork from '../hooks/useIsNetwork'
 import { useMainnetNFTMetadata } from '../hooks/useMainnetNFTs'
 
-
 const L1AssetPage:React.FC = () => {
   const { tokenContract, id } = useParams()
   if (!tokenContract || !id) {
@@ -27,6 +26,7 @@ const L1AssetPage:React.FC = () => {
       throw new Error('no signer or contracts')
     }
     if (!isMainnet) {
+      console.log('setting desired network')
       setDesiredNetwork(EXPECTED_MAINNET_CHAIN_ID)
       return
     }
@@ -35,7 +35,7 @@ const L1AssetPage:React.FC = () => {
       const { lockBox } = await contracts
       console.log("bridging");
       const ierc721 = IERC721__factory.connect(tokenContract, signer)
-      const tx = await ierc721["safeTransferFrom(address,address,uint256)"](await signer.getAddress(), lockBox?.address, id)
+      const tx = await ierc721["safeTransferFrom(address,address,uint256)"](address!, lockBox?.address, id)
       console.log('bridge tx: ', tx.hash)
       await tx.wait()
       console.log('bridging done')
@@ -47,7 +47,7 @@ const L1AssetPage:React.FC = () => {
     } finally {
       setBridgeLoading(false)
     }
-  }, [signer, contracts, isMainnet, setBridgeLoading, tokenContract, id]);
+  }, [signer, contracts, isMainnet, setBridgeLoading, tokenContract, id, setDesiredNetwork]);
 
   if (loading || !metadata) {
     return (

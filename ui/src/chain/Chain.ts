@@ -5,12 +5,25 @@ import { L2KeyHandler, L2KeyHandler__factory, LockBox, LockBox__factory } from '
 
 type Web3ModalProvider = any
 
-const networkName = [undefined, ""].includes(process.env.REACT_APP_NETWORK_NAME) ? "localhost" : process.env.REACT_APP_NETWORK_NAME
+const networkPairs = [undefined, ""].includes(process.env.REACT_APP_NETWORK_NAME) ? "testnet" : process.env.REACT_APP_NETWORK_NAME
 
-const addresses = require(`../deployments/${networkName}/addresses.json`)
+let addresses:Record<string,string>
+switch(networkPairs) {
+  case 'localhost':
+    addresses = require(`../deployments/localhost/addresses.json`)
+    break;
+  case 'testnet':
+    addresses = {
+      ...require(`../deployments/rinkeby/addresses.json`),
+      ...require(`../deployments/stardust/addresses.json`)
+    }
+    break;
+  default:
+    throw new Error("unknown network name try 'testnet' or 'production'")
+}
 
 function isLocalHost() {
-  return networkName === "localhost"
+  return networkPairs === "localhost"
 }
 
 export const CONNECTION_CHANGE = 'conected'
@@ -21,7 +34,7 @@ export let EXPECTED_METIS_CHAIN_ID = 588 // stardust
 export let MAINNET_PROVIDER_URL = 'https://eth-rinkeby.alchemyapi.io/v2/q07KTYxpTX8hq_TFTPIyOJM38jlWhRJF'
 
 if (isLocalHost()) {
-  console.log("Using local-only setup")
+  console.log('using localhost setup')
   EXPECTED_MAINNET_CHAIN_ID = 31337 // rinkeby
   EXPECTED_METIS_CHAIN_ID = 31337 // stardust
   MAINNET_PROVIDER_URL = 'http://localhost:8545'
@@ -32,7 +45,7 @@ const providerOptions = {
 };
 
 const web3Modal = new Web3Modal({
-  network: "mainnet", // optional
+  // network: "mainnet", // optional
   cacheProvider: true, // optional
   providerOptions // required
 });
@@ -90,6 +103,7 @@ class Chain extends EventEmitter {
   }
 
   private async setupContracts() {
+    console.log('setting up contracts')
     if (!this.signer || !this.provider) {
       throw new Error('need to have a provider and signer')
     }

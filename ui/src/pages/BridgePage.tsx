@@ -18,7 +18,7 @@ interface BridgeFormData {
 }
 
 const BridgePage: React.FC = () => {
-  const { signer, contracts } = useChain()
+  const { signer, contracts, address } = useChain()
   const { handleSubmit, register } = useForm<BridgeFormData>();
   const [loading, setLoading] = useState(false)
 

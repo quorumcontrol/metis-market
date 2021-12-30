@@ -6,7 +6,7 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
   const { deploy, log } = hre.deployments
   const { deployer } = await hre.getNamedAccounts()
 
-  if(!network.live || network.name !== "rinkeby") {
+  if(network.live && network.name !== "rinkeby") {
     log("skipping test NFT because live network that is not rinkeby")
     return
   }

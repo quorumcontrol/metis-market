@@ -1,36 +1,47 @@
 import { providers, Signer } from "ethers"
-import { useEffect, useState } from "react"
-import Chain, { CONNECTION_CHANGE, EXPECTED_MAINNET_CHAIN_ID, EXPECTED_METIS_CHAIN_ID } from "../chain/Chain"
+import React, { createContext, useContext, useEffect, useState } from "react"
+import Chain, { CONNECTION_CHANGE, EXPECTED_METIS_CHAIN_ID } from "../chain/Chain"
 
 const chain = new Chain()
 
-interface ChainStateExcludingDesired {
+interface ChainState {
   chain: Chain
   signer?: Signer
   provider?: providers.Provider
   network?: providers.Network
   contracts?: Chain['contracts']
   address?: string
-}
-
-interface ChainState extends ChainStateExcludingDesired {
   desiredNetwork: number
   setDesiredNetwork: React.Dispatch<React.SetStateAction<number>>
 }
 
-const useChain = ():ChainState => {
+export const ChainContext = createContext<ChainState>({
+  chain,
+  signer: chain.signer,
+  provider: chain.provider,
+  network: chain.network,
+  contracts: chain.contracts,
+  address: chain.address,
+  desiredNetwork: EXPECTED_METIS_CHAIN_ID,
+  setDesiredNetwork: (number)=>true
+})
+
+export const ChainProvider:React.FC = ({ children }) => {
   const [desiredNetwork, setDesiredNetwork] = useState(EXPECTED_METIS_CHAIN_ID)
-  const [chainState, setChainState] = useState<ChainStateExcludingDesired>({
+  const [chainState, setChainState] = useState<ChainState>({
     chain,
     signer: chain.signer,
     provider: chain.provider,
     network: chain.network,
     contracts: chain.contracts,
     address: chain.address,
+    desiredNetwork,
+    setDesiredNetwork
   })
 
   useEffect(() => {
     const handleConnectionChange = () => {
+      console.log('connection change: ', chain.network)
       setChainState((s) => {
         return {
           ...s,
@@ -49,11 +60,20 @@ const useChain = ():ChainState => {
     }
   })
 
-  return {
-    ...chainState,
-    desiredNetwork,
-    setDesiredNetwork
-  }
+   
+  return (
+    <ChainContext.Provider value={{
+      ...chainState,
+      desiredNetwork,
+      setDesiredNetwork
+    }}>
+      {children}
+    </ChainContext.Provider>
+  )
+}
+
+const useChain = () => {
+  return useContext(ChainContext)
 }
 
 export default useChain

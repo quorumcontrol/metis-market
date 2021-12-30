@@ -30,9 +30,9 @@ const useL2NFTs = (userAddress?:string) => {
         const tokenURI = await mainnetContract.tokenURI(l2Metadata.tokenId)
         const metadataResponse = await axios.get(tokenURI)
         return {
+          ...metadataResponse.data,
           id: l2Metadata.tokenId,
           tokenContract: l2Metadata.tokenContract,
-          ...metadataResponse.data,
           network: 'metis',
           l2Network: {
             id: id,
