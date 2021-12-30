@@ -27,7 +27,7 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
       case 'hardhat':
         return (await get('L2KeyHandler')).address
       case 'rinkeby':
-        throw new Error('should be replaced with the deployed stardust addr of L2KeyHandler')
+        return '0x77aD4f1978Fdc51bf7A659e042ed59CEB0E03db9' // stardust l2keyhandler deploy
     }
   }
 
@@ -37,18 +37,6 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
     from: deployer,
     args: [await messagePasserAddress(), await l2keyhandlerAddress()]
   })
-
-  if (lockBoxDeploy.newlyDeployed) {
-    await execute(
-      "L2KeyHandler", 
-      {
-        log: true,
-        from: deployer,
-      },
-      "setupLockbox",
-      lockBoxDeploy.address,  
-    )
-  }
   
 }
 export default func

@@ -4,7 +4,7 @@ import { network } from 'hardhat'
 
 
 const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
-  const { deploy, log, get } = hre.deployments
+  const { deploy, log, get, execute } = hre.deployments
   const { deployer } = await hre.getNamedAccounts()
 
   if(network.live && network.name !== "stardust") {
@@ -22,12 +22,30 @@ const func: DeployFunction = async function(hre: HardhatRuntimeEnvironment) {
     }
   }
 
+  const lockBoxAddress = async () => {
+    switch(network.name) {
+      case 'hardhat':
+        return (await get('LockBox')).address
+      case 'stardust':
+        return '0xB5642C348Ef444d801ED799fb9b122f980bf7178' // rinkeby deploy
+    }
+  }
+
   await deploy("L2KeyHandler", {
     log: true,
-    deterministicDeployment: true,
     from: deployer,
     args: [await messagePasserAddress()]
   })
   
+  await execute(
+    "L2KeyHandler", 
+    {
+      log: true,
+      from: deployer,
+    },
+    "setupLockbox",
+    lockBoxAddress(),
+  )
+
 }
 export default func
